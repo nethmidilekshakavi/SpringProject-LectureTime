@@ -1,0 +1,51 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 20px;
+}
+.container {
+    width: 50%;
+    margin: auto;
+}
+form {
+    background: #f4f4f4;
+    padding: 20px;
+    border-radius: 5px;
+}
+label {
+    font-weight: bold;
+}
+input {
+    width: 100%;
+    padding: 8px;
+    margin: 5px 0;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+.btn-container {
+    margin-top: 10px;
+}
+button {
+    padding: 10px 15px;
+    margin-right: 10px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+.save-btn { background: #28a745; color: white; }
+.update-btn { background: #ffc107; color: black; }
+.delete-btn { background: #dc3545; color: white; }
+table {
+    width: 100%;
+    margin-top: 20px;
+    border-collapse: collapse;
+}
+table, th, td {
+    border: 1px solid black;
+}
+th, td {
+    padding: 10px;
+    text-align: left;
+}
+th {
+    background: #ddd;
+}
