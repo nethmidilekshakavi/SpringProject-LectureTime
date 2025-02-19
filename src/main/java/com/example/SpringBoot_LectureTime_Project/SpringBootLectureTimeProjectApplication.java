@@ -12,9 +12,6 @@ public class SpringBootLectureTimeProjectApplication {
 		SpringApplication.run(SpringBootLectureTimeProjectApplication.class, args);
 	}
 
-	@Bean
-	public ModelMapper modelMapper(){
-		return new ModelMapper();
-	}
+
 
 }

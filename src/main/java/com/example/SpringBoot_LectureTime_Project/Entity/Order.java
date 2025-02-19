@@ -21,6 +21,7 @@ public class Order {
     private Customer customer;
 
     @ManyToMany
+
     @JoinTable(
             name = "order_details",
             joinColumns = @JoinColumn(name = "order_id"),

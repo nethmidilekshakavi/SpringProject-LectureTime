@@ -6,6 +6,8 @@ import com.example.SpringBoot_LectureTime_Project.Repo.CustomerRepo;
 import com.example.SpringBoot_LectureTime_Project.Servive.CustomerService;
 import com.example.SpringBoot_LectureTime_Project.Util.Mapping;
 import jakarta.transaction.Transactional;
+import org.modelmapper.ModelMapper;
+import org.modelmapper.TypeToken;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -17,20 +19,18 @@ import java.util.Optional;
 public class CustomerServiceImpl implements CustomerService {
 
     @Autowired
-    private Mapping mapping;
+    private ModelMapper modelMapper;
     @Autowired
     private CustomerRepo customerRepo;
 
     @Override
     public void saveCustomer(CustomerDto customerDto) {
-        System.out.println(" ============================"+customerDto);
-        Customer customer = mapping.toCustomerEntity(customerDto);
-        customerRepo.save(customer);
+        customerRepo.save(modelMapper.map(customerDto, Customer.class));
     }
 
     @Override
     public void deleteCustomer(Integer id) {
-        try{
+        try {
 
             Optional<Customer> optionalCustomer = customerRepo.findById(id);
 
@@ -47,31 +47,19 @@ public class CustomerServiceImpl implements CustomerService {
 
     @Override
     public List<CustomerDto> allCustomers() {
-
-        List<CustomerDto> customerDtoList = mapping.asCustomerDtoList(customerRepo.findAll());
-
-        return customerDtoList;
-
+        return modelMapper.map(customerRepo.findAll(), new TypeToken<List<CustomerDto>>(){}.getType());
     }
 
     @Override
-    public void updateCustomer(Integer id, CustomerDto customerDto) {
+    public void updateCustomer(Integer id, Customer customer) {
 
-     Optional<Customer> optionalCustomer =    customerRepo.findById(id);
+        Customer existingCustomer = customerRepo.findById(id).orElse(null);
 
-     Customer customer = new Customer();
+        if (existingCustomer != null) {
 
-            if (optionalCustomer.isPresent()){
+            customerRepo.save(modelMapper.map(customer, Customer.class));
 
-             customerDto.setName(customer.getName());
-             customerDto.setAddress(customer.getAddress());
-             customerDto.setContact(customer.getContact());
-             customerDto.setEmail(customer.getEmail());
-
-            }
-
-            customerRepo.save(customer);
+        }
     }
-
 
 }

@@ -1,10 +1,14 @@
 package com.example.SpringBoot_LectureTime_Project.Servive.Impl;
+import com.example.SpringBoot_LectureTime_Project.Dto.CustomerDto;
 import com.example.SpringBoot_LectureTime_Project.Dto.ItemDto;
+import com.example.SpringBoot_LectureTime_Project.Entity.Customer;
 import com.example.SpringBoot_LectureTime_Project.Entity.Item;
 import com.example.SpringBoot_LectureTime_Project.Repo.ItemRepo;
 import com.example.SpringBoot_LectureTime_Project.Servive.ItemService;
 import com.example.SpringBoot_LectureTime_Project.Util.Mapping;
 import jakarta.transaction.Transactional;
+import org.modelmapper.ModelMapper;
+import org.modelmapper.TypeToken;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -16,23 +20,21 @@ import java.util.Optional;
 public class ItemServiceImpl implements ItemService {
 
     @Autowired
-    private Mapping mapping;
+    private ModelMapper modelMapper;
     @Autowired
     private ItemRepo itemRepo;
 
     @Override
     public void saveItem(ItemDto itemDto) {
 
-        Item item = mapping.toItemEntity(itemDto);
-        itemRepo.save(item);
+        itemRepo.save(modelMapper.map(itemDto, Item.class));
 
     }
 
     @Override
     public List<ItemDto> getAllItem() {
 
-        List<ItemDto> allItems = mapping.asItemDtoList(itemRepo.findAll());
-        return allItems;
+        return modelMapper.map(itemRepo.findAll(), new TypeToken<List<CustomerDto>>(){}.getType());
 
     }
 
@@ -51,5 +53,20 @@ public class ItemServiceImpl implements ItemService {
         }
 
     }
+
+    @Override
+    public boolean update(Integer id, ItemDto itemDto) {
+
+        Item item = itemRepo.getReferenceById(id);
+
+        item.setName(itemDto.getName());
+        item.setQty(itemDto.getQty());
+        item.setPrice(itemDto.getPrice());
+
+        itemRepo.save(item);
+        return true;
+
+    }
+
 
 }

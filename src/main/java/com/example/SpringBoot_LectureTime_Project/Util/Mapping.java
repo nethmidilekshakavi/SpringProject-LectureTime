@@ -30,10 +30,9 @@ public class Mapping {
     }
 
 
-    public CustomerDto updateCustomer(Customer customer){
-        return modelMapper.map(customer , CustomerDto.class);
+    public CustomerDto toCustomerDTO(Customer customerEntity){
+        return modelMapper.map(customerEntity, CustomerDto.class);
     }
-
     public Item toItemEntity(ItemDto itemDto){
         return modelMapper.map(itemDto, Item.class);
     }
@@ -45,5 +44,7 @@ public class Mapping {
     public Order toOrderEntity(OrderDto orderDto){
         return modelMapper.map(orderDto, Order.class);
     }
+
+
 
 }

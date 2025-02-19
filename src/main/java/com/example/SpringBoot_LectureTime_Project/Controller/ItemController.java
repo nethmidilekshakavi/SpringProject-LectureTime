@@ -40,4 +40,13 @@ public class ItemController {
 
     }
 
+    @PutMapping("/{id}")
+    public ResponseEntity<Void> updateItem(@PathVariable ("id") Integer id ,@RequestBody ItemDto itemDto){
+
+
+        itemService.update(id,itemDto);
+        return new ResponseEntity<>(HttpStatus.OK);
+
+    }
+
 }

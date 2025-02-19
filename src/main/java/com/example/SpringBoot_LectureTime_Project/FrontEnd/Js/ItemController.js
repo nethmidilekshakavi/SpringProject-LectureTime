@@ -3,24 +3,32 @@ $(document).ready(function () {
 
     let selectedItemId = null;
 
+    // Load items and populate the table
     function loadItems() {
         $.ajax({
             url: "http://localhost:8090/api/v2/item",
             type: "GET",
             success: function (data) {
-                let tbody = $("table tbody");
-                tbody.empty();
+                let tbody = $("table tbody").empty();
                 data.forEach(item => {
-                    tbody.append(`<tr data-id="${item.id}" data-name="${item.name}" data-email="${item.qty}" data-contact="${item.price}">
-                        <td>${item.id}</td>
-                        <td>${item.name}</td>
-                        <td>${item.qty}</td>
-                        <td>${item.price}</td>
-                        <td>
-                            <button class="update-btn" data-id="${item.id}" data-name="${item.name}" data-qty="${item.qty}" data-price="${item.price}">Update</button>
-                            <button class="delete-btn" data-id="${item.id}">Delete</button>
-                        </td>
-                    </tr>`);
+                    tbody.append(`
+                        <tr>
+                            <td>${item.id}</td>
+                            <td>${item.name}</td>
+                            <td>${item.qty}</td>
+                            <td>${item.price}</td>
+                            <td>
+                                <button class="btn btn-warning update-btn" 
+                                    data-id="${item.id}" 
+                                    data-name="${item.name}" 
+                                    data-qty="${item.qty}" 
+                                    data-price="${item.price}">
+                                    Update
+                                </button>
+                                <button class="btn btn-danger delete-btn" data-id="${item.id}">Delete</button>
+                            </td>
+                        </tr>
+                    `);
                 });
             },
             error: function () {
@@ -29,87 +37,85 @@ $(document).ready(function () {
         });
     }
 
+    // Handle form submission (Add or Update item)
     $("#itemForm").submit(function (event) {
         event.preventDefault();
 
-        let name = $("#name").val();
-        let qty = $("#qty").val();
-        let price = $("#price").val();
+        const item = {
+            id:$("#id").val().trim(),
+            name: $("#name").val().trim(),
+            qty: $("#qty").val().trim(),
+            price: $("#price").val().trim()
+        };
 
-        if (!name || !qty || !price) {
+        if  ( !item.id || !item.name || !item.qty || !item.price) {
             alert("Please fill in all fields!");
             return;
         }
 
-        $.ajax({
-            url: "http://localhost:8090/api/v2/item",
-            type: "POST",
-            contentType: "application/json",
-            data: JSON.stringify({ name: name, qty: qty, price: price }),
-            success: function () {
-                alert("Item added successfully!");
-                $("#itemForm")[0].reset();
-                loadItems();
-            },
-            error: function () {
-                alert("Error adding items!");
-            }
-        });
-    });
-
-
-    $(document).on("click", "table tbody tr", function () {
-        selectedItemId = $(this).data("id");
-        let name = $(this).data("name");
-        let qty = $(this).data("qty");
-        let price = $(this).data("price");
-
-        $("#name").val(name);
-        $("#qty").val(qty);
-        $("#price").val(price);
-        $(".save-btn").text("Update item");
-    });
-
-    $("#itemForm").submit(function (event) {
-        event.preventDefault();
-
-        let name = $("#name").val();
-        let qty= $("#qty").val();
-        let price = $("price").val()
-
-        if (!selectedItemId) {
-            alert("No customer selected for updating!");
-            return;
+        if (selectedItemId) {
+            // Update Item
+            $.ajax({
+                url: `http://localhost:8090/api/v2/item/${selectedItemId}`,
+                type: "PUT",
+                contentType: "application/json",
+                data: JSON.stringify(item),
+                success: function () {
+                    alert("Item updated successfully!");
+                    resetForm();
+                    loadItems();
+                },
+                error: function () {
+                    alert("Error updating item!");
+                }
+            });
+        } else {
+            // Add Item
+            $.ajax({
+                url: "http://localhost:8090/api/v2/item",
+                type: "POST",
+                contentType: "application/json",
+                data: JSON.stringify(item),
+                success: function () {
+                    alert("Item added successfully!");
+                    resetForm();
+                    loadItems();
+                },
+                error: function () {
+                    alert("Error adding item!");
+                }
+            });
         }
-
-        $.ajax({
-            url: `http://localhost:8090/api/v2/item/${selectedItemId}`,
-            type: "PUT",
-            contentType: "application/json",
-            data: JSON.stringify({ name: name, qty: qty , price:price }),
-            success: function () {
-                alert("Item updated successfully!");
-                selectedItemId = null;
-                $(".save-btn").text("Save Customer");
-                $("#itemForm")[0].reset();
-                loadItems();
-            },
-            error: function () {
-                alert("Error updating customer!");
-            }
-        });
     });
 
+    // Click Update button to populate form
+    $(document).on("click", ".update-btn", function () {
+        selectedItemId = $(this).data("id");
 
+        $("#id").val($(this).data("id"))
+        $("#name").val($(this).data("name"));
+        $("#qty").val($(this).data("qty"));
+        $("#price").val($(this).data("price"));
+
+        // Change button text and style
+        $("#itemForm button[type='submit']")
+            .text("Update Item")
+            .removeClass("btn-primary")
+            .addClass("btn-success");
+    });
+
+    // Click Delete button
     $(document).on("click", ".delete-btn", function () {
-        let itemId = $(this).data("id");
-        if (confirm("Are you sure you want to delete this Item?")) {
+        const itemId = $(this).data("id");
+
+        if (confirm("Are you sure you want to delete this item?")) {
             $.ajax({
                 url: `http://localhost:8090/api/v2/item/${itemId}`,
                 type: "DELETE",
                 success: function () {
                     alert("Item deleted successfully!");
                     loadItems();
+                    resetForm();
                 },
                 error: function () {
                     alert("Error deleting item!");
@@ -117,4 +123,14 @@ $(document).ready(function () {
             });
         }
     });
+
+    // Reset form after add/update
+    function resetForm() {
+        $("#itemForm")[0].reset();
+        selectedItemId = null;
+        $("#itemForm button[type='submit']")
+            .text("Add Item")
+            .removeClass("btn-success")
+            .addClass("btn-primary");
+    }
 });

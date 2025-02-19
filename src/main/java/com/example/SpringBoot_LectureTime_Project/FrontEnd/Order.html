@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Order Management</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+        form {
+            background: #f9f9f9;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        label {
+            font-weight: bold;
+            margin-top: 10px;
+            display: block;
+        }
+        select, input[type="number"], input[type="text"], button {
+            width: 100%;
+            padding: 10px;
+            margin-top: 5px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+        }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            cursor: pointer;
+            margin-top: 15px;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        .order-summary {
+            margin-top: 30px;
+            background: #fff;
+            padding: 15px;
+            border-radius: 10px;
+            border: 1px solid #ccc;
+        }
+        .order-summary h3 {
+            color: #444;
+        }
+    </style>
+</head>
+<body>
+
+<h1>Place an Order</h1>
+
+<form id="orderForm">
+    <label for="customer">Select Customer:</label>
+    <select id="customer" name="customerId" required>
+        <option value="">-- Select Customer --</option>
+        <option value="1">John Doe</option>
+        <option value="2">Jane Smith</option>
+        <option value="3">Alice Johnson</option>
+    </select>
+
+    <label for="items">Select Items:</label>
+    <select id="items" name="items" multiple required>
+        <option value="101">Coffee - $5</option>
+        <option value="102">Tea - $3</option>
+        <option value="103">Sandwich - $7</option>
+        <option value="104">Cake - $4</option>
+    </select>
+
+    <label for="qty">Quantity:</label>
+    <input type="number" id="qty" name="quantity" min="1" value="1" required>
+
+    <label for="totalPrice">Total Price:</label>
+    <input type="text" id="totalPrice" name="totalPrice" readonly value="$0.00">
+
+    <button type="button" onclick="calculateTotal()">Calculate Total</button>
+    <button type="submit">Submit Order</button>
+</form>
+
+<div class="order-summary" id="orderSummary" style="display: none;">
+    <h3>Order Summary</h3>
+    <p><strong>Customer:</strong> <span id="summaryCustomer"></span></p>
+    <p><strong>Items:</strong> <span id="summaryItems"></span></p>
+    <p><strong>Quantity:</strong> <span id="summaryQty"></span></p>
+    <p><strong>Total Price:</strong> <span id="summaryPrice"></span></p>
+</div>
+
+<script>
+    const itemPrices = {
+        101: 5,
+        102: 3,
+        103: 7,
+        104: 4
+    };
+
+    function calculateTotal() {
+        const selectedItems = Array.from(document.getElementById('items').selectedOptions);
+        const quantity = parseInt(document.getElementById('qty').value);
+        let total = 0;
+
+        selectedItems.forEach(item => {
+            total += itemPrices[item.value] * quantity;
+        });
+
+        document.getElementById('totalPrice').value = `$${total.toFixed(2)}`;
+    }
+
+    document.getElementById('orderForm').addEventListener('submit', function(event) {
+        event.preventDefault();
+
+        const customerName = document.getElementById('customer').selectedOptions[0].textContent;
+        const selectedItems = Array.from(document.getElementById('items').selectedOptions).map(opt => opt.textContent);
+        const quantity = document.getElementById('qty').value;
+        const totalPrice = document.getElementById('totalPrice').value;
+
+        document.getElementById('summaryCustomer').textContent = customerName;
+        document.getElementById('summaryItems').textContent = selectedItems.join(', ');
+        document.getElementById('summaryQty').textContent = quantity;
+        document.getElementById('summaryPrice').textContent = totalPrice;
+
+        document.getElementById('orderSummary').style.display = 'block';
+    });
+</script>
+
+</body>
+</html>
