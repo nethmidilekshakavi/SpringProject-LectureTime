@@ -6,7 +6,6 @@ import com.example.SpringBoot_LectureTime_Project.Repo.CustomerRepo;
 import com.example.SpringBoot_LectureTime_Project.Servive.CustomerService;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -19,7 +18,6 @@ import java.util.Optional;
 @CrossOrigin(origins = "*")
 @AllArgsConstructor
 public class CustomerController {
-
 
     @Autowired
     private CustomerService customerService;

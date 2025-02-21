@@ -24,24 +24,39 @@ public class CustomerServiceImpl implements CustomerService {
     private CustomerRepo customerRepo;
 
     @Override
-    public void saveCustomer(CustomerDto customerDto) {
-        customerRepo.save(modelMapper.map(customerDto, Customer.class));
+    public boolean saveCustomer(CustomerDto customerDto) {
+
+        String name = "Vimala";
+
+        Customer customer1 =   customerRepo.SearchCustomerName(name);
+        System.out.println("=========================="+customer1.getAddress());
+
+       if (customerRepo.existsById(
+               customerDto.getId())){
+           throw new RuntimeException("Customer Already Excite");
+       }
+        else {
+            customerRepo.save(modelMapper.map(customerDto, Customer.class));
+            return true;
+        }
+
     }
 
     @Override
-    public void deleteCustomer(Integer id) {
+    public boolean deleteCustomer(Integer id) {
         try {
 
             Optional<Customer> optionalCustomer = customerRepo.findById(id);
 
             if (optionalCustomer.isPresent()) {
-
                 customerRepo.deleteById(id);
+                throw new RuntimeException("Customer Not Found");
             }
 
         } catch (RuntimeException e) {
             e.printStackTrace();
         }
+        return true;
 
     }
 
@@ -51,15 +66,16 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     @Override
-    public void updateCustomer(Integer id, Customer customer) {
+    public boolean updateCustomer(Integer id, Customer customer) {
 
         Customer existingCustomer = customerRepo.findById(id).orElse(null);
 
         if (existingCustomer != null) {
 
             customerRepo.save(modelMapper.map(customer, Customer.class));
-
+            throw new RuntimeException("Customer Already Excite");
         }
+        throw new RuntimeException("Customer Not Found");
     }
 
 }

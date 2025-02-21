@@ -7,12 +7,12 @@ import java.util.List;
 
 public interface CustomerService {
 
-    void saveCustomer(CustomerDto customerDto);
+    boolean saveCustomer(CustomerDto customerDto);
 
-    void deleteCustomer(Integer id);
+    boolean deleteCustomer(Integer id);
 
     List<CustomerDto> allCustomers();
 
-    void updateCustomer(Integer id , Customer customer);
+    boolean updateCustomer(Integer id , Customer customer);
 
 }

@@ -1,5 +1,6 @@
 package com.example.SpringBoot_LectureTime_Project.Servive.Impl;
 
+import com.example.SpringBoot_LectureTime_Project.Dto.CustomerDto;
 import com.example.SpringBoot_LectureTime_Project.Dto.OrderDto;
 import com.example.SpringBoot_LectureTime_Project.Entity.Customer;
 import com.example.SpringBoot_LectureTime_Project.Entity.Item;
@@ -8,9 +9,8 @@ import com.example.SpringBoot_LectureTime_Project.Repo.CustomerRepo;
 import com.example.SpringBoot_LectureTime_Project.Repo.ItemRepo;
 import com.example.SpringBoot_LectureTime_Project.Repo.OrderRepo;
 import com.example.SpringBoot_LectureTime_Project.Servive.OrderService;
-import com.example.SpringBoot_LectureTime_Project.Util.Mapping;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.ParameterResolutionDelegate;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -20,7 +20,7 @@ import java.util.List;
 public class OrderServiceImpl implements OrderService {
 
     @Autowired
-    private Mapping mapping;
+    private ModelMapper modelMapper;
     @Autowired
     private OrderRepo orderRepo;
     @Autowired
@@ -32,7 +32,7 @@ public class OrderServiceImpl implements OrderService {
     public void saveOrder(OrderDto orderDto) {
 
       Order order = new Order();
-      mapping.toOrderEntity(orderDto);
+      modelMapper.map(order, Order.class);
 
       Customer customer = customerRepo.getReferenceById(orderDto.getCustomerId());
 

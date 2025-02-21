@@ -3,6 +3,7 @@ package com.example.SpringBoot_LectureTime_Project.Controller;
 
 import com.example.SpringBoot_LectureTime_Project.Dto.ItemDto;
 import com.example.SpringBoot_LectureTime_Project.Servive.ItemService;
+import com.example.SpringBoot_LectureTime_Project.Util.ResponseUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,11 +20,20 @@ public class ItemController {
     private ItemService itemService;
 
     @PostMapping
-    public ResponseEntity<Void> saveItem(@RequestBody ItemDto itemDto){
+    public  ResponseUtil saveItem(@RequestBody ItemDto itemDto) {
 
-        itemService.saveItem(itemDto);
-        return new ResponseEntity<>(HttpStatus.OK);
+        try {
+            boolean res = itemService.saveItem(itemDto);
 
+            if (res) {
+                return new ResponseUtil(201, "Item Save OK", null);
+            } else {
+                return new ResponseUtil(500, "INTERNAL ERROR", null);
+            }
+
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @GetMapping
@@ -33,19 +43,37 @@ public class ItemController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteItem(@PathVariable ("id") Integer id){
+    public ResponseUtil deleteItem(@PathVariable ("id") Integer id){
 
-        itemService.deleteItem(id);
-        return new ResponseEntity<>(HttpStatus.OK);
+        boolean res =  itemService.deleteItem(id);
+
+        if (res){
+            return new ResponseUtil(201,"Item Delete Susess",null);
+        }else {
+            return new ResponseUtil(404,"Item id not Found ",null);
+        }
+
 
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Void> updateItem(@PathVariable ("id") Integer id ,@RequestBody ItemDto itemDto){
+    public ResponseUtil updateItem(@PathVariable ("id") Integer id ,@RequestBody ItemDto itemDto){
+      try{
+
+          boolean RES =  itemService.update(id,itemDto);
+
+          System.out.println(RES);
+
+          if (RES){
+              return new ResponseUtil(201,"Item Update OK",null);
+          }else {
+              return new ResponseUtil(500,"Internal Server Eorrr",null);
+          }
 
 
-        itemService.update(id,itemDto);
-        return new ResponseEntity<>(HttpStatus.OK);
+      } catch (Exception e) {
+          throw new RuntimeException(e);
+      }
 
     }
 

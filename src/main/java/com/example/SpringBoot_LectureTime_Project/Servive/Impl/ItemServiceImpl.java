@@ -6,6 +6,7 @@ import com.example.SpringBoot_LectureTime_Project.Entity.Item;
 import com.example.SpringBoot_LectureTime_Project.Repo.ItemRepo;
 import com.example.SpringBoot_LectureTime_Project.Servive.ItemService;
 import com.example.SpringBoot_LectureTime_Project.Util.Mapping;
+import com.example.SpringBoot_LectureTime_Project.Util.ResponseUtil;
 import jakarta.transaction.Transactional;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
@@ -25,9 +26,14 @@ public class ItemServiceImpl implements ItemService {
     private ItemRepo itemRepo;
 
     @Override
-    public void saveItem(ItemDto itemDto) {
+    public boolean saveItem(ItemDto itemDto) {
 
-        itemRepo.save(modelMapper.map(itemDto, Item.class));
+        if (itemRepo.existsById(itemDto.getId())){
+            return false;
+        }else {
+            itemRepo.save(modelMapper.map(itemDto, Item.class));
+            return true;
+        }
 
     }
 
@@ -39,7 +45,7 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public void deleteItem(Integer id) {
+    public boolean deleteItem(Integer id) {
 
         Optional<Item> optionalItem = itemRepo.findById(id);
         try {
@@ -47,24 +53,36 @@ public class ItemServiceImpl implements ItemService {
             if (optionalItem.isPresent()) {
 
                 itemRepo.deleteById(id);
+                return true;
+
             }
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
-
+return false;
     }
 
     @Override
     public boolean update(Integer id, ItemDto itemDto) {
 
-        Item item = itemRepo.getReferenceById(id);
+        Item existingItem = itemRepo.findById(id).orElse(null);
 
-        item.setName(itemDto.getName());
-        item.setQty(itemDto.getQty());
-        item.setPrice(itemDto.getPrice());
 
-        itemRepo.save(item);
-        return true;
+        if (existingItem != null){
+
+            existingItem.setName(itemDto.getName());
+            existingItem.setQty(itemDto.getQty());
+            existingItem.setPrice(itemDto.getPrice());
+
+            itemRepo.save(existingItem);
+           return true;
+
+        }else {
+
+            return false;
+
+        }
+
 
     }
 
