@@ -2,132 +2,119 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Order Management</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            max-width: 800px;
-            margin: 0 auto;
-            padding: 20px;
-        }
-        h1 {
-            text-align: center;
-            color: #333;
-        }
-        form {
-            background: #f9f9f9;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-        }
-        label {
-            font-weight: bold;
-            margin-top: 10px;
-            display: block;
-        }
-        select, input[type="number"], input[type="text"], button {
-            width: 100%;
-            padding: 10px;
-            margin-top: 5px;
-            border: 1px solid #ccc;
-            border-radius: 8px;
-        }
-        button {
-            background-color: #4CAF50;
-            color: white;
-            cursor: pointer;
-            margin-top: 15px;
-        }
-        button:hover {
-            background-color: #45a049;
-        }
-        .order-summary {
-            margin-top: 30px;
-            background: #fff;
-            padding: 15px;
-            border-radius: 10px;
-            border: 1px solid #ccc;
-        }
-        .order-summary h3 {
-            color: #444;
-        }
-    </style>
+    <title>POS - Coffee Shop</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/@sweetalert2/theme-dark@4/dark.css" rel="stylesheet">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <link rel="stylesheet" href="css/Order.css">
 </head>
 <body>
+<section id="order" class="container mt-5">
+    <h1 class="text-center mb-4">☕ Order Form</h1>
+    <form id="orderForm">
+        <div class="row g-3">
+            <div class="col-md-6">
+                <label for="OrderID" class="form-label">Order ID</label>
+                <input type="text" class="form-control" id="OrderID" placeholder="Enter Order ID">
+            </div>
+            <div class="col-md-6">
+                <label for="orderDate" class="form-label">Order Date</label>
+                <input type="date" class="form-control" id="orderDate">
+            </div>
+        </div>
 
-<h1>Place an Order</h1>
+        <h4 class="mt-4">Select Your Customer:</h4>
+        <div class="row g-3">
+            <div class="col-md-4">
+                <label for="customerId" class="form-label">Customer ID</label>
+                <select class="form-control" id="customerId" required>
+                    <option value="" disabled selected>Select Customer ID</option>
+                </select>
+            </div>
+            <div class="col-md-4">
+                <label for="orderCustomer" class="form-label">Customer Name</label>
+                <input type="text" class="form-control" id="orderCustomer" placeholder="Customer Name" required>
+            </div>
+            <div class="col-md-4">
+                <label for="orderphone" class="form-label">Phone Number</label>
+                <input type="text" class="form-control" id="orderphone" placeholder="Phone Number" required>
+            </div>
+        </div>
 
-<form id="orderForm">
-    <label for="customer">Select Customer:</label>
-    <select id="customer" name="customerId" required>
-        <option value="">-- Select Customer --</option>
-        <option value="1">John Doe</option>
-        <option value="2">Jane Smith</option>
-        <option value="3">Alice Johnson</option>
-    </select>
+        <h4 class="mt-4">Select Your Items:</h4>
+        <div class="row g-3">
+            <div class="col-md-4">
+                <label for="itemId" class="form-label">Item ID</label>
+                <select class="form-control" id="itemId" required>
+                    <option value="" disabled selected>Select Item ID</option>
+                </select>
+            </div>
+            <div class="col-md-4">
+                <label for="description" class="form-label">Item Description</label>
+                <input type="text" class="form-control" id="description" placeholder="Description" required>
+            </div>
+            <div class="col-md-4">
+                <label for="price" class="form-label">Price</label>
+                <input type="text" class="form-control" id="price" placeholder="Price" required>
+            </div>
+        </div>
 
-    <label for="items">Select Items:</label>
-    <select id="items" name="items" multiple required>
-        <option value="101">Coffee - $5</option>
-        <option value="102">Tea - $3</option>
-        <option value="103">Sandwich - $7</option>
-        <option value="104">Cake - $4</option>
-    </select>
+        <div class="row g-3 mt-3">
+            <div class="col-md-6">
+                <label for="quantity" class="form-label">Available Quantity</label>
+                <input type="number" class="form-control" id="quantity" placeholder="Available Quantity" readonly>
+            </div>
+            <div class="col-md-6">
+                <label for="Getquantity" class="form-label">Order Quantity</label>
+                <input type="number" class="form-control" id="Getquantity" placeholder="Enter Quantity" required>
+            </div>
+        </div>
 
-    <label for="qty">Quantity:</label>
-    <input type="number" id="qty" name="quantity" min="1" value="1" required>
+        <button type="button" class="btn btn-primary mt-4 w-100" id="order-save">Add to Cart 🛒</button>
+    </form>
 
-    <label for="totalPrice">Total Price:</label>
-    <input type="text" id="totalPrice" name="totalPrice" readonly value="$0.00">
+    <h4 class="mt-5">Cart Items</h4>
+    <table class="table table-bordered mt-3" id="orderTable">
+        <thead>
+        <tr>
+            <th>Name</th>
+            <th>Phone Number</th>
+            <th>Description</th>
+            <th>Date</th>
+            <th>Price</th>
+            <th>Quantity</th>
+            <th>Total Cost</th>
+        </tr>
+        </thead>
+        <tbody id="OrderTableBody"></tbody>
+    </table>
 
-    <button type="button" onclick="calculateTotal()">Calculate Total</button>
-    <button type="submit">Submit Order</button>
-</form>
+    <div class="row g-3 mt-4">
+        <div class="col-md-6">
+            <label for="Total" class="form-label">Total</label>
+            <input type="text" class="form-control" id="Total" readonly>
+        </div>
+        <div class="col-md-6">
+            <label for="discout" class="form-label">Discount (%)</label>
+            <input type="number" class="form-control" id="discout" placeholder="Enter Discount">
+        </div>
+    </div>
 
-<div class="order-summary" id="orderSummary" style="display: none;">
-    <h3>Order Summary</h3>
-    <p><strong>Customer:</strong> <span id="summaryCustomer"></span></p>
-    <p><strong>Items:</strong> <span id="summaryItems"></span></p>
-    <p><strong>Quantity:</strong> <span id="summaryQty"></span></p>
-    <p><strong>Total Price:</strong> <span id="summaryPrice"></span></p>
-</div>
+    <button type="button" class="btn btn-primary" id="purchase">Purchase 🧾</button>
 
-<script>
-    const itemPrices = {
-        101: 5,
-        102: 3,
-        103: 7,
-        104: 4
-    };
-
-    function calculateTotal() {
-        const selectedItems = Array.from(document.getElementById('items').selectedOptions);
-        const quantity = parseInt(document.getElementById('qty').value);
-        let total = 0;
-
-        selectedItems.forEach(item => {
-            total += itemPrices[item.value] * quantity;
-        });
-
-        document.getElementById('totalPrice').value = `$${total.toFixed(2)}`;
-    }
-
-    document.getElementById('orderForm').addEventListener('submit', function(event) {
-        event.preventDefault();
-
-        const customerName = document.getElementById('customer').selectedOptions[0].textContent;
-        const selectedItems = Array.from(document.getElementById('items').selectedOptions).map(opt => opt.textContent);
-        const quantity = document.getElementById('qty').value;
-        const totalPrice = document.getElementById('totalPrice').value;
-
-        document.getElementById('summaryCustomer').textContent = customerName;
-        document.getElementById('summaryItems').textContent = selectedItems.join(', ');
-        document.getElementById('summaryQty').textContent = quantity;
-        document.getElementById('summaryPrice').textContent = totalPrice;
-
-        document.getElementById('orderSummary').style.display = 'block';
-    });
-</script>
-
+    <h4 class="mt-5">Order Details</h4>
+    <table class="table table-bordered mt-3" id="orderDetails">
+        <thead>
+        <tr>
+            <th>Order ID</th>
+            <th>Date</th>
+            <th>Customer ID</th>
+            <th>Sub Total</th>
+        </tr>
+        </thead>
+        <tbody id="OrderDetailTableBody"></tbody>
+    </table>
+</section>
+<script src="Js/Order.js"></script>
 </body>
 </html>

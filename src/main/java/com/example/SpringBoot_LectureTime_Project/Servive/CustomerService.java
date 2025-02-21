@@ -15,4 +15,6 @@ public interface CustomerService {
 
     boolean updateCustomer(Integer id , CustomerDto customer);
 
+    List<Customer> findCustomer (Integer id);
+
 }

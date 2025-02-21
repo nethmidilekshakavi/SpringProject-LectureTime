@@ -4,7 +4,6 @@ import com.example.SpringBoot_LectureTime_Project.Dto.CustomerDto;
 import com.example.SpringBoot_LectureTime_Project.Entity.Customer;
 import com.example.SpringBoot_LectureTime_Project.Repo.CustomerRepo;
 import com.example.SpringBoot_LectureTime_Project.Servive.CustomerService;
-import com.example.SpringBoot_LectureTime_Project.Util.Mapping;
 import jakarta.transaction.Transactional;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
@@ -83,5 +82,14 @@ public class CustomerServiceImpl implements CustomerService {
         }
         return false;
     }
+
+    @Override
+    public List<Customer> findCustomer(Integer id) {
+
+        List<Customer> res =  customerRepo.findCustomersById(id);
+
+        return res;
+    }
+
 
 }
