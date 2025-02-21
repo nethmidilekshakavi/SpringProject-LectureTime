@@ -1,4 +1,5 @@
 loadCustomers()
+export let Order_Array = [];
 
 function loadCustomers() {
     $.ajax({
@@ -22,7 +23,7 @@ $("#customerId").on("change", function () {
     const selectedId = $(this).val();
 
     $.ajax({
-        url: `http://localhost:8090/api/v2/customer/${selectedId}`,
+        url: `http://localhost:8090/api/v2/customerFind/${selectedId}`,
         type: "GET",
         success: function (customer) {
             $("#orderCustomer").val(customer.name);
@@ -58,7 +59,7 @@ $("#itemId").on("change", function () {
     const selectedId = $(this).val();
 
     $.ajax({
-        url: `http://localhost:8090/api/v2/customerFind/${selectedId}`,
+        url: `http://localhost:8090/api/v2/findItemDetails/${selectedId}`,
         type: "GET",
         success: function (item) {
             $("#description").val(item.name);
@@ -70,3 +71,4 @@ $("#itemId").on("change", function () {
         }
     });
 });
+
