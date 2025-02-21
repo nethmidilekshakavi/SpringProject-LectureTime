@@ -1,5 +1,4 @@
 loadCustomers()
-export let Order_Array = [];
 
 function loadCustomers() {
     $.ajax({
@@ -71,4 +70,5 @@ $("#itemId").on("change", function () {
         }
     });
 });
+
 
