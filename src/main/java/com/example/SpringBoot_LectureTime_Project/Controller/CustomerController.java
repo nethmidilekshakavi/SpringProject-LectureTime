@@ -4,7 +4,10 @@ import com.example.SpringBoot_LectureTime_Project.Dto.CustomerDto;
 import com.example.SpringBoot_LectureTime_Project.Entity.Customer;
 import com.example.SpringBoot_LectureTime_Project.Repo.CustomerRepo;
 import com.example.SpringBoot_LectureTime_Project.Servive.CustomerService;
+import com.example.SpringBoot_LectureTime_Project.Util.ResponseUtil;
 import lombok.AllArgsConstructor;
+import org.modelmapper.ModelMapper;
+import org.modelmapper.TypeToken;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,53 +26,75 @@ public class CustomerController {
     private CustomerService customerService;
     @Autowired
     private CustomerRepo customerRepo;
+    @Autowired
+    private ModelMapper modelMapper;
 
 
     @PostMapping
-    public ResponseEntity<Void> saveCustomer(@RequestBody CustomerDto customerDto){
+    public ResponseUtil saveCustomer(@RequestBody CustomerDto customerDto){
         System.out.println(customerDto);
+
+        boolean res =    customerService.saveCustomer(customerDto);
+
         try{
-           customerService.saveCustomer(customerDto);
-           return new ResponseEntity<>(HttpStatus.OK);
+
+            if (res){
+                return new ResponseUtil(201,"Customer Save",null);
+            }
+
+            else {
+                return new ResponseUtil(500,"Customer not save",null);
+            }
 
         } catch (Exception e) {
-            e.printStackTrace();
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+            throw new RuntimeException();
+
+
         }
     }
 
     @DeleteMapping(value = "/{id}")
-    public ResponseEntity<Void> deleteCustomer(@PathVariable ("id") Integer id){
+    public ResponseUtil deleteCustomer(@PathVariable ("id") Integer id){
 
-        try{
-         Optional<Customer> optionalCustomer =  customerRepo.findById(id);
-            if (optionalCustomer.isPresent()){
-                customerService.deleteCustomer(id);
+        try {
+            Optional<Customer> optionalCustomer = customerRepo.findById(id);
+            if (optionalCustomer.isPresent()) {
+                boolean res = customerService.deleteCustomer(id);
+
+                if (res) {
+                    return new ResponseUtil(201, "Customer Delete ok", null);
+                }
+
             }
-          return   new ResponseEntity<>(HttpStatus.OK);
-        } catch (RuntimeException e) {
-            return   new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
-
+        return new ResponseUtil(500,"Customer not Delete",null);
     }
 
 
     @GetMapping
     public List<CustomerDto> getAllCustomer(){
 
-       List<CustomerDto> customers = customerService.allCustomers();
+      return    modelMapper.map(customerRepo.findAll(), new TypeToken<List<CustomerDto>>(){}.getType());
 
-       return customers;
 
 
     }
 
     @PutMapping(value = "/{id}")
-    public ResponseEntity<Void> updateCustomer(@PathVariable ("id") Integer id,
-                                                @RequestBody Customer customerDto
+    public ResponseUtil updateCustomer(@PathVariable ("id") Integer id,
+                                                @RequestBody CustomerDto customerDto
                                                ){
-        customerService.updateCustomer(id,customerDto);
-       return new ResponseEntity<>(HttpStatus.OK);
+
+        boolean res = customerService.updateCustomer(id,customerDto);
+
+        if (res){
+            return new ResponseUtil(201,"Customer save Ok",null);
+        }
+
+        return new ResponseUtil(500,"Customer Not Update",null);
+
     }
 
 }

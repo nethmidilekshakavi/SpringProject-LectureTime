@@ -40,7 +40,7 @@ public class ItemServiceImpl implements ItemService {
     @Override
     public List<ItemDto> getAllItem() {
 
-        return modelMapper.map(itemRepo.findAll(), new TypeToken<List<CustomerDto>>(){}.getType());
+        return modelMapper.map(itemRepo.findAll(), new TypeToken<List<Item>>(){}.getType());
 
     }
 
@@ -65,26 +65,27 @@ return false;
     @Override
     public boolean update(Integer id, ItemDto itemDto) {
 
-        Item existingItem = itemRepo.findById(id).orElse(null);
+
+            Item existingItem = itemRepo.findById(id).orElse(null);
+
+            if (existingItem != null) {
+
+                existingItem.setPrice(itemDto.getPrice());
+                existingItem.setName(itemDto.getName());
+                existingItem.setQty(itemDto.getQty());
 
 
-        if (existingItem != null){
 
-            existingItem.setName(itemDto.getName());
-            existingItem.setQty(itemDto.getQty());
-            existingItem.setPrice(itemDto.getPrice());
-
-            itemRepo.save(existingItem);
-           return true;
-
-        }else {
-
-            return false;
-
+                // Save the updated item
+                itemRepo.save(existingItem);
+                return true;
+            } else {
+                return false;
+            }
         }
 
 
-    }
+
 
 
 }

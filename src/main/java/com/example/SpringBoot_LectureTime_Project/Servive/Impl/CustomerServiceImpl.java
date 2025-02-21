@@ -26,19 +26,18 @@ public class CustomerServiceImpl implements CustomerService {
     @Override
     public boolean saveCustomer(CustomerDto customerDto) {
 
-        String name = "Vimala";
+       /* String name = "Vimala";
 
         Customer customer1 =   customerRepo.SearchCustomerName(name);
-        System.out.println("=========================="+customer1.getAddress());
+        System.out.println("=========================="+customer1.getAddress());*/
 
-       if (customerRepo.existsById(
-               customerDto.getId())){
-           throw new RuntimeException("Customer Already Excite");
-       }
-        else {
-            customerRepo.save(modelMapper.map(customerDto, Customer.class));
-            return true;
-        }
+      if (customerRepo.existsById(customerDto.getId())){
+          return false;
+
+      }else {
+          customerRepo.save(modelMapper.map(customerDto, Customer.class));
+          return true;
+      }
 
     }
 
@@ -50,13 +49,13 @@ public class CustomerServiceImpl implements CustomerService {
 
             if (optionalCustomer.isPresent()) {
                 customerRepo.deleteById(id);
-                throw new RuntimeException("Customer Not Found");
+                return true;
             }
 
         } catch (RuntimeException e) {
             e.printStackTrace();
         }
-        return true;
+        return false;
 
     }
 
@@ -66,16 +65,23 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     @Override
-    public boolean updateCustomer(Integer id, Customer customer) {
+    public boolean updateCustomer(Integer id, CustomerDto customer) {
 
         Customer existingCustomer = customerRepo.findById(id).orElse(null);
 
         if (existingCustomer != null) {
 
-            customerRepo.save(modelMapper.map(customer, Customer.class));
-            throw new RuntimeException("Customer Already Excite");
+
+            existingCustomer.setName(customer.getName());
+            existingCustomer.setAddress(customer.getAddress());
+            existingCustomer.setContact(customer.getContact());
+            existingCustomer.setEmail(customer.getEmail());
+
+            customerRepo.save(existingCustomer);
+            return true;
+
         }
-        throw new RuntimeException("Customer Not Found");
+        return false;
     }
 
 }

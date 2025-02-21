@@ -13,6 +13,6 @@ public interface CustomerService {
 
     List<CustomerDto> allCustomers();
 
-    boolean updateCustomer(Integer id , Customer customer);
+    boolean updateCustomer(Integer id , CustomerDto customer);
 
 }
